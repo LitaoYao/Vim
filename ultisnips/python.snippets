@@ -1,0 +1,83 @@
+# ---------- ↓↓common snippet ↓↓----------
+
+# 代码分块
+snippet region "region" b
+# ----------------------------------------
+# ↓↓ ${1:description}
+${2:${VISUAL}}
+# ↑↑ $1
+# ----------------------------------------
+endsnippet
+
+# 加括号
+snippet () "brackets" b
+(${1:${VISUAL}})
+endsnippet
+
+# 加包裹符号
+snippet '' "quote" b
+${1:'}${2:${VISUAL}}$1
+endsnippet
+
+# 打印一行横线
+snippet pl "print_line" b
+print '${1:-}' * ${2:100}
+endsnippet
+
+# pprint
+snippet pprint "pprint" b
+print '${2:-}' * ${3:100}
+from pprint import pprint
+pprint(${1})
+print '$2' * $3
+endsnippet
+
+# 异常
+snippet exc "sys.excepthook" b
+try:
+	${1:${VISUAL}}
+except:
+	sys.excepthook(*sys.exc_info())
+endsnippet
+
+# 属性
+snippet property "property" b
+@property
+def ${1:name}(self):
+	return self._$1
+@$1.setter
+def $1(self, value):
+	if self._$1 == value:
+		return
+	self._$1 = value
+endsnippet
+
+# ---------- ↑↑common snippet ↑↑----------
+
+# ---------- ↓↓G66 snippet ↓↓----------
+
+# 打印堆栈
+snippet psi "print_stack_info" b
+print '-' * ${1:100}
+print '${2:reason}'
+import com.utils.Helpers as Helpers
+Helpers.print_stack_info()
+print '-' * $1
+endsnippet
+
+# import com.utils.xxx as xxx
+snippet icu "import com.utils" b
+import com.utils.${1:Helpers} as $1
+endsnippet
+
+# import com.cdata.xxx as XXX
+snippet icd "import com.cdata" b
+import com.cdata.${1:data} as ${1/.*/\U$0\E/g}
+endsnippet
+
+# import com.const as const
+snippet icc "import com.const" b
+import com.${1:const} as $1
+endsnippet
+
+# ---------- ↑↑G66 snippet ↑↑----------
