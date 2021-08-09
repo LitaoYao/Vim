@@ -45,6 +45,8 @@ Plug 'kristijanhusak/defx-icons'
 Plug 'sheerun/vim-polyglot'
 Plug 'vim-scripts/wimproved.vim'
 Plug 'puremourning/vimspector'
+Plug 'voldikss/vim-translator'
+Plug 'mhinz/vim-startify'
 " }
 call plug#end()
 
@@ -61,6 +63,7 @@ set nocp
 "   编码相关
 " ------------------------
 set encoding=utf-8
+set termencoding=utf-8
 "set langmenu=zh_CN.UTF-8
 set langmenu=en_US.utf8
 let $LANG='en_US'
@@ -100,8 +103,8 @@ if (has("gui_running"))
 	set guioptions=eg
 	" color torte
 	set nowrap
-	"set lines=60
-	"set columns=135
+	set lines=50
+	set columns=100
 else
 	"colo molokai
 	colo ron
@@ -109,11 +112,11 @@ else
 endif
 
 " 自动全屏
-if has('win32')
-	au GUIEnter * simalt ~x
-else
-	au GUIEnter * call MaximizeWindow()
-endif
+" if has('win32')
+" 	au GUIEnter * simalt ~x
+" else
+" 	au GUIEnter * call MaximizeWindow()
+" endif
 
 
 function! MaximizeWindow()
@@ -126,9 +129,9 @@ endfunction
 syntax on
 " 设置字体
 if (has("gui_running"))
-	set guifont=Consolas_NF:h15:cANSI
+	set guifont=Consolas_NF:h14:cANSI
 else
-	set guifont=Consolas:h15
+	set guifont=Consolas:h14
 endif
 
 " 显示行号
@@ -238,6 +241,11 @@ set wildmenu
 " ------------------------
 "   程序相关
 " ------------------------
+" Python
+let g:python3_host_prog = 'C:\Python38\python.exe'
+set pythonthreehome=C:\\Python38
+set pythonthreedll=C:\\Python38\\python38.dll
+
 func Compile() 
 	exec "silent w"
 	if (findfile("Makefile") == "")
@@ -412,6 +420,7 @@ let g:airline_symbols.branch = ''
 let g:airline_symbols.readonly = ''
 let g:airline_symbols.linenr = '☰'
 let g:airline_symbols.maxlinenr = ''
+let g:airline_symbols.colnr = ''
 let g:airline_symbols.dirty='⚡'
 " }
 
@@ -443,12 +452,14 @@ let g:ale_lint_on_text_changed = 'never'
 " 打开文件时不进行检查
 let g:ale_lint_on_enter = 0
 " 设置图标
-let g:ale_sign_error = '✗'
+let g:ale_sign_error = '✗' "❌
 let g:ale_sign_warning = '⚡'
 " 默认linters
 " , 'mypy', 'pylint']
 let g:ale_linters = {
-	\ 'python': ['flake8']
+	\ 'python': ['flake8'],
+	\ 'cpp': ['gcc'],
+	\ 'c': ['gcc'],
 \}
 " }
 
@@ -472,12 +483,12 @@ nnoremap <leader>l :LeaderfLine<CR>
 let g:Lf_WildIgnore = {
 	\ 'dir': ['.svn','.git','.hg'],
 	\ 'file': ['*.sw?','~$*','*.bak','*.exe','*.o','*.so','*.py[con]','*.bin',
-	\		'*.jpg','*.png','*.csb','*.dds','*.tga','*.ktx','*.astc','*.pvr',
-	\		'*.scn[_flag_32]','*.chunk','*.area',
+	\		'*.jpg','*.png','*.csb','*.dds','*.tga','*.ktx','*.astc','*.pvr', '*.bc7',
+	\		'*.scn[_flag_32]','*.chunk*','*.area',
 	\ 		'*.ags','*.gim','*.gis','*.mesh','*.mtg','*.sfx']
 	\}
 let g:Lf_WindowPosition = 'popup'
-let g:Lf_RootMarkers = ['.git', '.svn', '.hg', '.project']
+let g:Lf_RootMarkers = ['.tags', '.svn', '.git', '.hg']
 let g:Lf_WorkingDirectoryMode = 'ac'
 let g:Lf_StlColorscheme = 'gruvbox_material'
 let g:Lf_PopupColorscheme = 'gruvbox_default'
@@ -504,7 +515,7 @@ autocmd! BufNewFile,BufRead *.glsl,*.fp,*.vp,*.frag.*.vert set ft=glsl
 " }
 
 " Plugin: hlsl {
-autocmd! BufNewFile,BufRead *.fx,*.hlsl,*.fxh,*.spzs,*.hlsl,*.gfx,*.spzs,*.vs,*.fs,*.ps,*.nfx,*.nsf set ft=hlsl
+autocmd! BufNewFile,BufRead *.fx,*.hlsl,*.fxh,*.spzs,*.hlsl,*.gfx,*.spzs,*.vs,*.fs,*.ps,*.nfx,*.nsf,*.usf,*.ush set ft=hlsl
 " }
 
 " " Plugin: vim-gutentags {
@@ -573,7 +584,6 @@ let g:floaterm_height=0.9
 " }
 
 " Plugin: defx {
-let g:python3_host_prog = 'C:\Python38\python.exe'
 nnoremap <leader>d :Defx -columns=icons:indent:filename:type<CR>
 nnoremap <leader>e :Defx `expand('%:p:h')` -columns=icons:indent:filename:type<CR>
 autocmd FileType defx call s:defx_my_settings()
@@ -676,15 +686,35 @@ let g:NERDSpaceDelims = 1
 
 " Plugin: wimproved {
 au GUIEnter * silent! WToggleClean
-au GUIEnter * silent! WSetAlpha 210
-au GUIEnter * silent! WToggleFullscreen
+au GUIEnter * silent! WSetAlpha 255
+" au GUIEnter * silent! WToggleFullscreen
 map <S-F12> :WSetAlpha 210<CR>
 map <C-F12> :WSetAlpha 255<CR>
 map <F12> :call FullScreen()<CR>
 func FullScreen()
 	exec 'WToggleFullscreen'
 	if has('win32')
-		exec 'simalt ~x'
+		simalt ~x
 	endif
 endfunc
+" }
+
+" Plugin: startify {
+let g:startify_lists = [
+	\ { 'type': 'files',     'header': ['   MRU']            },
+	\ { 'type': 'sessions',  'header': ['   Sessions']       },
+	\ { 'type': 'bookmarks', 'header': ['   Bookmarks']      },
+	\ { 'type': 'commands',  'header': ['   Commands']       },
+\ ]
+let g:startify_bookmarks = [
+	\ { 't': 'G:/G66/code/trunk' },
+	\ { 'f': 'G:/G66/code/branches/future' },
+	\ { 'e': 'F:/Neox/src/3d-engine/branches/mobile_g66_bw' },
+\ ]
+let g:startify_files_number = 10
+let g:startify_fortune_use_unicode = 0
+let g:startify_enable_special = 0
+let g:startify_custom_header = 
+	\startify#center(startify#fortune#cowsay('', '✧', '░', '✧', '✧', '✧', '✧'))
+nnoremap <leader>s :Startify<CR>
 " }
