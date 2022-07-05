@@ -6,7 +6,7 @@ set nocompatible
 set t_Co=256
 " }
 
-call plug#begin('~/.vim/plugged')
+call plug#begin('~/vimfiles/plugged')
 " Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " Plug 'ludovicchabant/vim-gutentags'
 " Plug 'chenkaie/smarthomekey.vim'
@@ -20,7 +20,7 @@ Plug 'flazz/vim-colorschemes'
 Plug 'ervandew/supertab'
 "Plug 'scrooloose/nerdtree', {'on': 'NERDTreeToggle'}
 Plug 'preservim/nerdcommenter'
-Plug 'Yggdroot/LeaderF'
+Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
 Plug 'dyng/ctrlsf.vim'
 " Plug 'tikhomirov/vim-glsl'
 Plug 'beyondmarc/hlsl.vim'
@@ -47,7 +47,9 @@ Plug 'vim-scripts/wimproved.vim'
 Plug 'puremourning/vimspector'
 Plug 'voldikss/vim-translator'
 Plug 'mhinz/vim-startify'
-" }
+Plug 'OmniSharp/omnisharp-vim'
+" Plug 'skywind3000/vim-auto-popmenu'
+" Plug 'skywind3000/vim-dict'
 call plug#end()
 
 if $TERM == 'screen'
@@ -78,7 +80,7 @@ if has("multi_byte")
 	" Uncomment to have 'bomb' on by default for new files.
 	" Note, this will not apply to the first, empty
 	" buffer created at Vim startup.
-	" setglobal bomb
+	setglobal bomb
 	set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
 endif
 
@@ -103,8 +105,8 @@ if (has("gui_running"))
 	set guioptions=eg
 	" color torte
 	set nowrap
-	set lines=50
-	set columns=100
+	set lines=60
+	set columns=150
 else
 	"colo molokai
 	colo ron
@@ -129,9 +131,9 @@ endfunction
 syntax on
 " 设置字体
 if (has("gui_running"))
-	set guifont=Consolas_NF:h14:cANSI
+    set guifont=Consolas_NF:h14:cANSI
 else
-	set guifont=Consolas:h14
+	set guifont=Consolas:h14:cANSI
 endif
 
 " 显示行号
@@ -140,7 +142,9 @@ set number
 set vb
 " 使用sublime主题
 syntax enable
-colorscheme gruvbox
+colorscheme solarized8_dark_high
+" colorscheme gruvbox
+set background=dark
 
 " ------------------------
 "   格式相关设置
@@ -179,6 +183,8 @@ autocmd FileType python set tabstop=4
 autocmd FileType python set shiftwidth=4
 autocmd FileType python set smarttab
 autocmd FileType python set noexpandtab
+
+autocmd FileType lua set expandtab
 
 " ------------------------
 "   编辑相关设置
@@ -222,6 +228,8 @@ set wildmode=longest,list,full
 set wildmenu
 " 打开拼写检查
 "set spell
+" 取消preivew补全
+set completeopt-=preview
 
 " ------------------------
 "   自动保存退出时vim状态
@@ -242,9 +250,10 @@ set wildmenu
 "   程序相关
 " ------------------------
 " Python
-let g:python3_host_prog = 'C:\Python38\python.exe'
-set pythonthreehome=C:\\Python38
-set pythonthreedll=C:\\Python38\\python38.dll
+
+let g:python3_host_prog = 'C:\Users\bobyao\AppData\Local\Programs\Python\Python310\python.exe'
+set pythonthreehome=C:\\Users\\bobyao\\AppData\\Local\\Programs\\Python\\Python310
+set pythonthreedll=C:\\Users\\bobyao\\AppData\\Local\\Programs\\Python\\Python310\\python310.dll
 
 func Compile() 
 	exec "silent w"
@@ -405,15 +414,18 @@ let g:airline_extensions = []
 "let g:airline#extensions#whitespace#checks = [ ]
 let g:airline_powerline_fonts=1
 let g:Powerline_symbols='fancy'
-let g:airline_theme='wombat'
+let g:airline_theme='solarized_flood'
+" let g:airline_theme='wombat'
 if !exists('g:airline_symbols')
 	let g:airline_symbols = {}
 endif
 " powerline symbols
-let g:airline_left_sep = ''
-let g:airline_left_alt_sep = ''
+let g:airline_left_sep = ''
+let g:airline_left_alt_sep = ''
 let g:airline_right_sep = ''
 let g:airline_right_alt_sep = ''
+" let g:airline_left_sep = ''
+" let g:airline_left_alt_sep = ''
 " let g:airline_right_sep = ''
 " let g:airline_right_alt_sep = ''
 let g:airline_symbols.branch = ''
@@ -444,7 +456,7 @@ let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 1
 let g:ale_lint_on_insert_leave = 1
 " 显示状态栏
-let g:ale_sign_column_always = 1
+let g:ale_sign_column_always = 0
 " 不需要高亮行
 let g:ale_set_highlights = 0
 " 文件内容发生变化时不进行检查
@@ -481,15 +493,19 @@ nnoremap <leader>p :LeaderfFunction<CR>
 nnoremap <leader>o :LeaderfBufTag<CR>
 nnoremap <leader>l :LeaderfLine<CR>
 let g:Lf_WildIgnore = {
-	\ 'dir': ['.svn','.git','.hg'],
-	\ 'file': ['*.sw?','~$*','*.bak','*.exe','*.o','*.so','*.py[con]','*.bin',
+	\ 'dir': ['.svn','.git','.hg', 'Temp'],
+	\ 'file': ['*.sw?','~$*','*.bak','*.exe','*.o','*.so','*.py[con]','*.bin', '*.dll', '*.pdb',
 	\		'*.jpg','*.png','*.csb','*.dds','*.tga','*.ktx','*.astc','*.pvr', '*.bc7',
 	\		'*.scn[_flag_32]','*.chunk*','*.area',
-	\ 		'*.ags','*.gim','*.gis','*.mesh','*.mtg','*.sfx']
+	\		'*.ags','*.gim','*.gis','*.mesh','*.mtg','*.sfx',
+	\		'*.doc[x]', '*.xls[x]', '*.ppt[x]',
+	\		'*.meta',]
 	\}
 let g:Lf_WindowPosition = 'popup'
-let g:Lf_RootMarkers = ['.tags', '.svn', '.git', '.hg']
+let g:Lf_RootMarkers = ['.vimroot', '.svn', '.git', '.hg']
 let g:Lf_WorkingDirectoryMode = 'ac'
+" let g:Lf_StlColorscheme = 'default'
+" let g:Lf_PopupColorscheme = 'default'
 let g:Lf_StlColorscheme = 'gruvbox_material'
 let g:Lf_PopupColorscheme = 'gruvbox_default'
 " let g:Lf_StlSeparator = { 'left': '', 'right': '' }
@@ -707,9 +723,8 @@ let g:startify_lists = [
 	\ { 'type': 'commands',  'header': ['   Commands']       },
 \ ]
 let g:startify_bookmarks = [
-	\ { 't': 'G:/G66/code/trunk' },
-	\ { 'f': 'G:/G66/code/branches/future' },
-	\ { 'e': 'F:/Neox/src/3d-engine/branches/mobile_g66_bw' },
+	\ { 'l': 'G:/Aov/trunk/Project/Assets/Prefabs/Lua' },
+	\ { 'c': 'G:/Aov/trunk/Scripts' },
 \ ]
 let g:startify_files_number = 10
 let g:startify_fortune_use_unicode = 0
@@ -717,4 +732,25 @@ let g:startify_enable_special = 0
 let g:startify_custom_header = 
 	\startify#center(startify#fortune#cowsay('', '✧', '░', '✧', '✧', '✧', '✧'))
 nnoremap <leader>s :Startify<CR>
+" }
+
+" Plugin: OmniSharp{
+let g:OmniSharp_server_path = 'C:\Program Files\Omnisharp\OmniSharp.exe'
+let g:OmniSharp_popup_position = 'center'
+let g:OmniSharp_popup = 1
+let g:OmniSharp_highlighting = 0
+" }
+
+" Plugin: vim-auto-popmenu{
+" enable this plugin for filetypes, '*' for all files.
+" let g:apc_enable_ft = {'*':1}
+"
+" " source for dictionary, current or other loaded buffers, see ':help cpt'
+" set cpt=.,k,w,b
+"
+" " don't select the first item.
+" set completeopt=menu,menuone,noselect
+"
+" " suppress annoy messages.
+" set shortmess+=c
 " }
