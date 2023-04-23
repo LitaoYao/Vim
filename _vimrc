@@ -50,6 +50,7 @@ Plug 'mhinz/vim-startify'
 Plug 'OmniSharp/omnisharp-vim'
 " Plug 'skywind3000/vim-auto-popmenu'
 " Plug 'skywind3000/vim-dict'
+" Plug 'yegappan/lsp'
 call plug#end()
 
 if $TERM == 'screen'
@@ -129,6 +130,12 @@ endfunction
 " filetype plugin indent off
 " 开启语法加亮
 syntax on
+syntax enable
+set re=1
+set lazyredraw
+set synmaxcol=256
+syntax sync minlines=256
+
 " 设置字体
 if (has("gui_running"))
     set guifont=Consolas_NF:h14:cANSI
@@ -141,7 +148,6 @@ set number
 " 去掉响铃
 set vb
 " 使用sublime主题
-syntax enable
 colorscheme solarized8_dark_high
 " colorscheme gruvbox
 set background=dark
@@ -159,7 +165,11 @@ set smarttab
 set noexpandtab
 " 显示tab
 set list
-set listchars=tab:\¦\ \ ,trail:\ 
+set listchars=tab:\¦\ 
+" 设定tab为灰色
+highlight LeaderTab guifg=#666666
+" 匹配tab
+match LeaderTab /\t/
 " 打开 doxygen 高亮
 let g:load_doxygen_syntax=1
 " 打开 c 风格缩进
@@ -251,9 +261,9 @@ set completeopt-=preview
 " ------------------------
 " Python
 
-let g:python3_host_prog = 'C:\Users\bobyao\AppData\Local\Programs\Python\Python310\python.exe'
-set pythonthreehome=C:\\Users\\bobyao\\AppData\\Local\\Programs\\Python\\Python310
-set pythonthreedll=C:\\Users\\bobyao\\AppData\\Local\\Programs\\Python\\Python310\\python310.dll
+let g:python3_host_prog = 'C:\Users\bobyao\AppData\Local\Programs\Python\Python311\python.exe'
+set pythonthreehome=C:\\Users\\bobyao\\AppData\\Local\\Programs\\Python\\Python311
+set pythonthreedll=C:\\Users\\bobyao\\AppData\\Local\\Programs\\Python\\Python311\\python311.dll
 
 func Compile() 
 	exec "silent w"
@@ -325,6 +335,8 @@ endfunc
 " ------------------------
 "   快捷键设置
 " ------------------------
+"  全选
+map <C-a> ggVG
 " 保存当前文件
 map <C-s> :w<CR>
 " 复制
@@ -723,8 +735,7 @@ let g:startify_lists = [
 	\ { 'type': 'commands',  'header': ['   Commands']       },
 \ ]
 let g:startify_bookmarks = [
-	\ { 'l': 'G:/Aov/trunk/Project/Assets/Prefabs/Lua' },
-	\ { 'c': 'G:/Aov/trunk/Scripts' },
+	\ { 'c': '~/_vimrc' },
 \ ]
 let g:startify_files_number = 10
 let g:startify_fortune_use_unicode = 0
